@@ -1,2 +1,150 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
+
+public class Tris {
+
+	static ArrayList<Integer> posizioniGiocatore = new ArrayList<Integer>();
+	static ArrayList<Integer> posizioniCPU = new ArrayList<Integer>();
+
+	
+	public static void main(String[] args) {
+		
+		char[][] tavola = {{' ', '|', ' ', '|', ' '},
+					{'-', '+', '-', '+', '-'},
+					{' ', '|', ' ', '|', ' '},
+					{'-', '+', '-', '+', '-'},
+					{' ', '|', ' ', '|', ' '}};
+		
+		printTavola(tavola);
+		Scanner scan = new Scanner(System.in);
+		
+		while(true) {
+			
+			System.out.println("Inserisci la posizione (1-9): ");
+			int posGio = scan.nextInt();
+			while(posizioniGiocatore.contains(posGio) || posizioniCPU.contains(posizioniGiocatore)) {
+				System.out.println("Posizione NON disponibile. Inserisci una nuova posizione:");
+				posGio= scan.nextInt();
+			}
+			
+			piazzamento(tavola, posGio, "giocatore");
+			
+			String risultato = Vincitore ();
+			if (risultato.length() > 0) {
+				System.out.println(risultato);
+				break;
+			}
+			
+			Random rand = new Random();
+			int cpuPos = rand.nextInt(9) + 1;
+			while(posizioniGiocatore.contains(cpuPos) || posizioniCPU.contains(cpuPos)) {
+				posGio= scan.nextInt();
+			}
+			piazzamento(tavola, cpuPos, "cpu");
+			
+			printTavola(tavola);
+			risultato = Vincitore ();
+			if (risultato.length() > 0) {
+				System.out.println(risultato);
+				break;
+			}
+			
+
+		}
+		
+		
+	}
+
+
+	public static void printTavola(char [][] tavola) {
+		
+		for(char[] riga : tavola) {
+			for(char c : riga) {
+				System.out.print(c);
+			}
+			System.out.println();
+		}
+	}
+	
+	public static void piazzamento(char [][] tavola, int pos, String utente) {
+		
+		char simbolo = ' ';
+		
+		if(utente.equals("giocatore")) {
+			simbolo = 'X';
+			posizioniGiocatore.add(pos);
+		} else if (utente.equals("cpu")) {
+			simbolo = 'O';
+			posizioniCPU.add(pos);
+			}			
+		
+		switch(pos) {
+			case 1:
+				tavola[0][0] = simbolo;
+				break;
+			case 2:
+				tavola[0][2] = simbolo;
+				break;
+			case 3:
+				tavola[0][4] = simbolo;
+				break;
+			case 4:
+				tavola[2][0] = simbolo;
+				break;
+			case 5:
+				tavola[2][2] = simbolo;
+				break;
+			case 6:
+				tavola[2][4] = simbolo;
+				break;
+			case 7:
+				tavola[4][0] = simbolo;
+				break;
+			case 8:
+				tavola[4][2] = simbolo;
+				break;
+			case 9:
+				tavola[4][4] = simbolo;
+				break;
+			default:
+				break;
+		}
+	}
+	
+	public static String Vincitore() {
+		
+		List Sup = Arrays.asList(1,2,3);
+		List Mid = Arrays.asList(4,5,6);
+		List Inf = Arrays.asList(7,8,9);
+		List Sin = Arrays.asList(1,4,7);
+		List Cen = Arrays.asList(2,5,8);
+		List Des = Arrays.asList(3,6,9);
+		List Ob1 = Arrays.asList(1,5,9);
+		List Ob2 = Arrays.asList(7,5,3);
+		
+		List<List> vittoria = new ArrayList<List>();
+		vittoria.add(Sup);
+		vittoria.add(Mid);
+		vittoria.add(Inf);
+		vittoria.add(Sin);
+		vittoria.add(Cen);
+		vittoria.add(Des);
+		vittoria.add(Ob1);
+		vittoria.add(Ob2);
+		
+		for(List l : vittoria) {
+			if(posizioniGiocatore.containsAll(l)) {
+				return "Congratulazioni! Hai vinto!";
+			}else if (posizioniCPU.containsAll(l)) {
+				return "Che peccato! Vince il computer!";
+			}else if(posizioniGiocatore.size() + posizioniCPU.size() == 9) {
+				return "PATTA!";
+			}
+		}
+		return "";
+	}
+	
+}
